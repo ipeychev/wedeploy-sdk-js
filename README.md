@@ -104,11 +104,11 @@ npm run release
 [BSD-3-Clause] © Liferay, inc.
 
 
-[build-status-svg]: https://travis-ci.com/wedeploy/api-js.svg?token=a51FNuiJPYZtHhup9q1V&branch=master
-[build-status-link]: https://travis-ci.com/wedeploy/api-js
+[build-status-svg]: https://travis-ci.com/wedeploy/wedeploy-sdk-js.svg?token=a51FNuiJPYZtHhup9q1V&branch=master
+[build-status-link]: https://travis-ci.com/wedeploy/wedeploy-sdk-js
 
 [license-svg]: https://img.shields.io/badge/license-BSD-lightgrey.svg
-[license-link]: https://github.com/wedeploy/api-js/blob/master/LICENSE.md
+[license-link]: https://github.com/wedeploy/wedeploy-sdk-js/blob/master/LICENSE.md
 
 [npm-svg]: https://img.shields.io/npm/v/wedeploy.svg
 [npm-link]: https://npmjs.org/wedeploy
