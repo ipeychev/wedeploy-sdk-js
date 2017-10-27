@@ -1,3 +1,5 @@
+Test
+
 # WeDeploy SDK for JavaScript
 
 [![Build Status][build-status-svg]][build-status-link]
