@@ -260,15 +260,14 @@ class DataApiHelper extends ApiHelper {
    * Adds a filter to be composed with this filter using "gd" operator.
    * @param {string} field The field's name
    * @param {*} locationOrCircle Either a `Geo.Circle` instance or a coordinate
-   * @param {Range|string=} opt_rangeOrDistance Either a `Range` instance or
-   *   the distance value.
+   * @param {string=} opt_distance The distance value.
    * @return {DataApiHelper} Returns the {@link DataApiHelper} object itself, so
    *   calls can be chained
    * @chainable
    */
-  distance(field, locationOrCircle, opt_rangeOrDistance) {
+  distance(field, locationOrCircle, opt_distance) {
     return this.where(
-      Filter.distance(field, locationOrCircle, opt_rangeOrDistance)
+      Filter.distance(field, locationOrCircle, opt_distance)
     );
   }
 

@@ -148,19 +148,18 @@ class Filter extends Embodied {
    * Returns a {@link Filter} instance that uses the "gd" operator.
    * @param {string} field The field's name
    * @param {*} locationOrCircle Either a `Geo.Circle` instance or a coordinate
-   * @param {Range|string=} opt_rangeOrDistance Either a `Range` instance or
-   *   the distance value
+   * @param {string=} opt_distance The distance value
    * @return {!Filter} Returns an instance of {@link Filter}
    * @static
    */
-  static distance(field, locationOrCircle, opt_rangeOrDistance) {
+  static distance(field, locationOrCircle, opt_distance) {
     let location = locationOrCircle;
-    let range = opt_rangeOrDistance;
+    let range = opt_distance;
     if (locationOrCircle instanceof Geo.Circle) {
       location = locationOrCircle.getCenter();
       range = Range.to(locationOrCircle.getRadius());
-    } else if (!(opt_rangeOrDistance instanceof Range)) {
-      range = Range.to(opt_rangeOrDistance);
+    } else if (!(opt_distance instanceof Range)) {
+      range = Range.to(opt_distance);
     }
     return Filter.distanceInternal_(field, location, range);
   }
