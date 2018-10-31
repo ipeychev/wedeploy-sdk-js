@@ -249,17 +249,23 @@ class Auth {
   /**
    * Checks if the user has scopes.
    * @param {string|array.<string>} scopes Scope or array of scopes to check
-   * @param {Object} options The options for successful array matching
-   * @param {string} [options.match=all] Option to determine successful array
-   *   match
+   * @param {Object} options The options for successful scope matching. The
+   *   supported options are:
+   *   - match - A string which value could be either `all` or `any`. In case of
+   *     `all`, the function will return `true` if all passed scopes are found
+   *     inside the list of supported scopes. In case of `any`, the function
+   *     will return `true` if any of the passed scopes is found in the list of
+   *     supported scopes.
    * @return {boolean} Returns true if given set of supported scopes is
    *   provided, false otherwise
    */
-  hasSupportedScopes(scopes, { match = 'all' } = {}) {
-    if (Array.isArray(scopes) && match == 'any') {
-      return scopes.some(val => this.supportedScopes.indexOf(val) > -1);
-    } else if (Array.isArray(scopes) && match == 'all') {
-      return scopes.every(val => this.supportedScopes.indexOf(val) > -1);
+  hasSupportedScopes(scopes, options = {match: 'all'}) {
+    if (Array.isArray(scopes)) {
+      if (options.match === 'all') {
+        return scopes.every(val => this.supportedScopes.indexOf(val) > -1);
+      } else {
+        return scopes.some(val => this.supportedScopes.indexOf(val) > -1);
+      }
     } else {
       return this.supportedScopes.indexOf(scopes) > -1;
     }

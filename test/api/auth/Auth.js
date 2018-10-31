@@ -103,13 +103,22 @@ describe('Auth', function() {
     it('should return true only if user has all supported scopes in a given array', function() {
       const auth = Auth.create();
       auth.setSupportedScopes(['admin']);
-      assert.ok(!auth.hasSupportedScopes(['admin', 'invalid']));
+      assert.strictEqual(auth.hasSupportedScopes(['admin']), true);
+    });
+
+    it('should return false if user doesn\'t have all supported scopes in a given array', function() {
+      const auth = Auth.create();
+      auth.setSupportedScopes(['admin']);
+      assert.strictEqual(auth.hasSupportedScopes(['admin', 'invalid']), false);
     });
 
     it('should return true if user has any supported scope in a given array', function() {
       const auth = Auth.create();
       auth.setSupportedScopes(['admin']);
-      assert.ok(auth.hasSupportedScopes(['admin', 'invalid'], { match: 'any' }));
+      assert.strictEqual(
+        auth.hasSupportedScopes(['admin', 'invalid'], {match: 'any'}),
+        true
+      );
     });
   });
 
