@@ -110,6 +110,9 @@ class DataApiHelper extends ApiHelper {
    *   calls can be chained
    */
   none(field, ...args) {
+    if (args.length === 1 && Array.isArray(args[0])) {
+      args = args[0];
+    }
     return this.where(Filter.none(field, args));
   }
 
@@ -238,6 +241,9 @@ class DataApiHelper extends ApiHelper {
    *   calls can be chained
    */
   any(field, ...args) {
+    if (args.length === 1 && Array.isArray(args[0])) {
+      args = args[0];
+    }
     return this.where(Filter.any(field, args));
   }
 
