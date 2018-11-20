@@ -111,6 +111,9 @@ class DataApiHelper extends ApiHelper {
    * @chainable
    */
   none(field, ...args) {
+    if (args.length === 1 && Array.isArray(args[0])) {
+      args = args[0];
+    }
     return this.where(Filter.none(field, args));
   }
 
@@ -236,6 +239,9 @@ class DataApiHelper extends ApiHelper {
    * @chainable
    */
   any(field, ...args) {
+    if (args.length === 1 && Array.isArray(args[0])) {
+      args = args[0];
+    }
     return this.where(Filter.any(field, args));
   }
 

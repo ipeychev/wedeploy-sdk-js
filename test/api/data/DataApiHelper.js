@@ -728,6 +728,34 @@ describe('DataApiHelper', function() {
 
       assert.deepEqual(queryBody, query);
     });
+
+    it('should build the none query into the query body from array', function() {
+      const data = WeDeploy.data('http://localhost').none('name', [
+        'cuscuz',
+        'tapioca',
+      ]);
+
+      const query = data.processAndResetQueryState();
+
+      const queryBody = {
+        body_: {
+          filter: [
+            {
+              and: [
+                {
+                  name: {
+                    operator: 'none',
+                    value: ['cuscuz', 'tapioca'],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      assert.deepEqual(queryBody, query);
+    });
   });
 
   describe('.exists()', function() {
@@ -1170,6 +1198,34 @@ describe('DataApiHelper', function() {
         'cuscuz',
         'tapioca'
       );
+
+      const query = data.processAndResetQueryState();
+
+      const queryBody = {
+        body_: {
+          filter: [
+            {
+              and: [
+                {
+                  name: {
+                    operator: 'any',
+                    value: ['cuscuz', 'tapioca'],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      assert.deepEqual(queryBody, query);
+    });
+
+    it('should build the any query into the query body from array', function() {
+      const data = WeDeploy.data('http://localhost').any('name', [
+        'cuscuz',
+        'tapioca',
+      ]);
 
       const query = data.processAndResetQueryState();
 
