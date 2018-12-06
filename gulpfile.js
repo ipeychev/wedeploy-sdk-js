@@ -31,6 +31,8 @@
 
 'use strict';
 
+/* eslint-disable no-console,require-jsdoc */
+
 const babelPresetMetal = require('babel-preset-metal');
 const babelPresetResolveSource = require('babel-preset-metal-resolve-source');
 const del = require('del');
@@ -41,7 +43,6 @@ const mocha = require('gulp-mocha');
 const nodeExternals = require('webpack-node-externals');
 const replace = require('gulp-replace');
 const request = require('request-promise-native');
-const runSequence = require('run-sequence');
 const Server = require('karma').Server;
 const webpack = require('webpack');
 
@@ -186,7 +187,7 @@ if (release) {
   sourceMap = false;
 }
 
-gulp.task('build:browser', function() {
+function buildBrowser() {
   const webpackConfig = {
     devtool: sourceMap,
     entry: {
@@ -228,9 +229,9 @@ gulp.task('build:browser', function() {
       }
     });
   });
-});
+}
 
-gulp.task('build:node', function() {
+function buildNode() {
   const webpackConfig = {
     devtool: sourceMap,
     entry: {
@@ -273,49 +274,41 @@ gulp.task('build:node', function() {
       }
     });
   });
-});
+}
 
-gulp.task('clear', function() {
+function clear() {
   return del(['build']);
+}
+
+const build = gulp.series(
+  clear,
+  gulp.parallel(lint, buildBrowser, buildNode),
+  patchSocketIo
+);
+
+const ci = gulp.series(lint, testSaucelabs, testNode);
+
+const buildWatch = gulp.series(build, function buildWatch() {
+  gulp.watch(['src/**/*', 'test/**/*'], build);
 });
 
-gulp.task('build', function(done) {
-  runSequence(
-    'clear',
-    ['lint', 'build:browser', 'build:node'],
-    'patch-socket.io',
-    done
-  );
-});
-
-/* eslint-disable no-console,require-jsdoc */
-gulp.task('ci', function(done) {
-  return runSequence('lint', 'test:saucelabs', 'test:node', done);
-});
-
-gulp.task('build:watch', ['build'], function() {
-  gulp.watch(['src/**/*', 'test/**/*'], ['build']);
-});
-
-gulp.task('lint', function() {
+function lint() {
   return gulp
     .src(['src/**/*.js', 'test/**/*.js', '!node_modules/**'])
     .pipe(eslint())
     .pipe(eslint.format());
-});
+}
 
-gulp.task('patch-socket.io', function() {
+function patchSocketIo() {
   return gulp
     .src([`build/browser/api${apiSuffix}.js`])
     .pipe(replace('if (\'withCredentials\' in xhr) {', 'if (false) {'))
     .pipe(gulp.dest('build/browser'));
-});
+}
 
-gulp.task('test', function(done) {
-  runSequence('test:browser', 'test:node', done);
-});
+const test = gulp.series(testBrowser, testNode);
 
-gulp.task('test:browser', function(done) {
+function testBrowser(done) {
   const config = Object.assign({}, babelConfigKarma, {
     browsers: ['Chrome'],
 
@@ -323,9 +316,9 @@ gulp.task('test:browser', function(done) {
   });
 
   new Server(config, done).start();
-});
+}
 
-gulp.task('test:coverage', function(done) {
+function testCoverage(done) {
   const config = Object.assign({}, babelConfigCoverage, {
     browsers: ['Chrome'],
 
@@ -340,9 +333,9 @@ gulp.task('test:coverage', function(done) {
   });
 
   new Server(config, done).start();
-});
+}
 
-gulp.task('test:node', function() {
+function testNode() {
   return gulp
     .src(
       [
@@ -357,13 +350,13 @@ gulp.task('test:node', function() {
         compilers: 'js:babel-core/register',
       })
     );
+}
+
+const testNodeWatch = gulp.series(testNode, function nodeWatch() {
+  gulp.watch(['src/**/*', 'test/**/*'], testNode);
 });
 
-gulp.task('test:node:watch', ['test:node'], function() {
-  gulp.watch(['src/**/*', 'test/**/*'], ['test:node']);
-});
-
-gulp.task('test:saucelabs', function(done) {
+function testSaucelabs(done) {
   let url = 'https://app-wedeploysdkjsjwt.wedeploy.io';
 
   if (process.env.TRAVIS_PULL_REQUEST) {
@@ -395,4 +388,18 @@ gulp.task('test:saucelabs', function(done) {
 
     new Server(config, done).start();
   });
-});
+}
+
+exports.build = build;
+exports.ci = ci;
+exports.clear = clear;
+exports.lint = lint;
+exports.test = test;
+exports['build:browser'] = buildBrowser;
+exports['build:node'] = buildNode;
+exports['build:watch'] = buildWatch;
+exports['test:browser'] = testBrowser;
+exports['test:coverage'] = testCoverage;
+exports['test:node:watch'] = testNodeWatch;
+exports['test:node'] = testNode;
+exports['test:saucelabs'] = testSaucelabs;
