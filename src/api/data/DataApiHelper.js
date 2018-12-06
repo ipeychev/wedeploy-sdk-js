@@ -530,6 +530,22 @@ class DataApiHelper extends ApiHelper {
   }
 
   /**
+   * Retrieves data type mappings of given collection.
+   * @param {!string} name The name of the collection
+   * @return {Promise} Will be resolved with an object, containing the type
+   *   mappings
+   */
+  getCollectionMappings(name) {
+    assertDefAndNotNull(name, 'Collection name must be specified');
+
+    return this.buildUrl_()
+      .param('name', name)
+      .get(this.processAndResetQueryState())
+      .then(response => assertResponseSucceeded(response))
+      .then(response => response.body());
+  }
+
+  /**
    * Retrieve data from a [document/field/collection] and put it in a search
    * format.
    * @param {string} key Key used to delete the document/field/collection
