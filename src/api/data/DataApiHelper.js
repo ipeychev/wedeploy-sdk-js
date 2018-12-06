@@ -110,6 +110,9 @@ class DataApiHelper extends ApiHelper {
    *   calls can be chained
    */
   none(field, ...args) {
+    if (args.length === 1 && Array.isArray(args[0])) {
+      args = args[0];
+    }
     return this.where(Filter.none(field, args));
   }
 
@@ -238,6 +241,9 @@ class DataApiHelper extends ApiHelper {
    *   calls can be chained
    */
   any(field, ...args) {
+    if (args.length === 1 && Array.isArray(args[0])) {
+      args = args[0];
+    }
     return this.where(Filter.any(field, args));
   }
 
@@ -518,6 +524,22 @@ class DataApiHelper extends ApiHelper {
 
     return this.buildUrl_()
       .path(key)
+      .get(this.processAndResetQueryState())
+      .then(response => assertResponseSucceeded(response))
+      .then(response => response.body());
+  }
+
+  /**
+   * Retrieves data type mappings of given collection.
+   * @param {!string} name The name of the collection
+   * @return {Promise} Will be resolved with an object, containing the type
+   *   mappings
+   */
+  getCollectionMappings(name) {
+    assertDefAndNotNull(name, 'Collection name must be specified');
+
+    return this.buildUrl_()
+      .param('name', name)
       .get(this.processAndResetQueryState())
       .then(response => assertResponseSucceeded(response))
       .then(response => response.body());

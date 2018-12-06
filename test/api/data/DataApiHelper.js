@@ -729,6 +729,34 @@ describe('DataApiHelper', function() {
 
       assert.deepEqual(queryBody, query);
     });
+
+    it('should build the none query into the query body from array', function() {
+      const data = WeDeploy.data('http://localhost').none('name', [
+        'cuscuz',
+        'tapioca',
+      ]);
+
+      const query = data.processAndResetQueryState();
+
+      const queryBody = {
+        body_: {
+          filter: [
+            {
+              and: [
+                {
+                  name: {
+                    operator: 'none',
+                    value: ['cuscuz', 'tapioca'],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      assert.deepEqual(queryBody, query);
+    });
   });
 
   describe('.exists()', function() {
@@ -1217,6 +1245,34 @@ describe('DataApiHelper', function() {
         'cuscuz',
         'tapioca'
       );
+
+      const query = data.processAndResetQueryState();
+
+      const queryBody = {
+        body_: {
+          filter: [
+            {
+              and: [
+                {
+                  name: {
+                    operator: 'any',
+                    value: ['cuscuz', 'tapioca'],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      assert.deepEqual(queryBody, query);
+    });
+
+    it('should build the any query into the query body from array', function() {
+      const data = WeDeploy.data('http://localhost').any('name', [
+        'cuscuz',
+        'tapioca',
+      ]);
 
       const query = data.processAndResetQueryState();
 
@@ -1808,6 +1864,53 @@ describe('DataApiHelper', function() {
                 assert.strictEqual(requestUrlWithNoQuery, RequestMock.getUrl());
                 done();
               });
+          });
+      });
+    });
+  });
+
+  describe('.getCollectionMappings()', function() {
+    context('when using invalid params', function() {
+      it('should fail trying to retrieve data without specifying the collection', function() {
+        const data = WeDeploy.data('http://localhost');
+        assert.throws(function() {
+          data.getCollectionMappings(null);
+        }, Error);
+      });
+    });
+
+    context('when using valid params', function() {
+      it('should set headers on getCollectionMappings', function(done) {
+        RequestMock.intercept('GET', 'http://localhost/?name=food').reply(
+          200,
+          '[{"id": 2, "ping": "pong1"}, {"id": 3, "ping": "pong2"}]'
+        );
+
+        WeDeploy.data('http://localhost')
+          .header('TestHost', 'localhost')
+          .getCollectionMappings('food')
+          .then(response => {
+            assert.strictEqual(getTestHostHeader_(), 'localhost');
+            done();
+          });
+      });
+
+      it('should return data mappings of a collection', function(done) {
+        RequestMock.intercept('GET', 'http://localhost/?name=food').reply(
+          200,
+          '[{"mappings":{"temp":"long","city":"keyword","id":"keyword"},' +
+            '"size":7284,"documents":6,"name":"cities"}]'
+        );
+
+        WeDeploy.data('http://localhost')
+          .getCollectionMappings('food')
+          .then(response => {
+            assert.strictEqual(
+              '[{"mappings":{"temp":"long","city":"keyword","id":"keyword"},' +
+                '"size":7284,"documents":6,"name":"cities"}]',
+              response
+            );
+            done();
           });
       });
     });
