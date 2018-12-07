@@ -294,11 +294,17 @@ class DataApiHelper extends ApiHelper {
    * @param {string} field The field's name
    * @param {*} rangeOrMin Either a `Range` instance or a the range's min value
    * @param {*=} opt_max The range's max value
+   * @param {*=} opt_rangeEdges The Range's edges value. Optional param,
+   *   representing the edges value of the range. It could contain the following
+   *   properties:
+   *   - includeUpper - means that `to` is `lt` when false or `lte` when true
+   *   - includeLower - means that `from` is `gt` when `false` or `gte` when
+   *     true
    * @return {DataApiHelper} Returns the {@link DataApiHelper} object itself, so
    *   calls can be chained
    */
-  range(field, rangeOrMin, opt_max) {
-    return this.where(Filter.range(field, rangeOrMin, opt_max));
+  range(field, rangeOrMin, opt_max, opt_rangeEdges) {
+    return this.where(Filter.range(field, rangeOrMin, opt_max, opt_rangeEdges));
   }
 
   /**

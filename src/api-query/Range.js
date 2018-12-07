@@ -44,15 +44,32 @@ class Range extends Embodied {
    * Constructs a {@link Range} instance.
    * @param {*} from Range's `from` value
    * @param {*} opt_to Optional param, representing the `to` value of the range
+   * @param {*} opt_rangeEdges Optional param, representing the edges value of
+   *   the range. It could contain the following properties:
+   *   - includeUpper - means that `to` is `lt` when false or `lte` when true
+   *   - includeLower - means that `from` is `gt` when `false` or `gte` when
+   *     true
    * @constructor
    */
-  constructor(from, opt_to) {
+  constructor(from, opt_to, opt_rangeEdges) {
     super();
+
     if (core.isDefAndNotNull(from)) {
       this.body_.from = from;
     }
+
     if (core.isDefAndNotNull(opt_to)) {
       this.body_.to = opt_to;
+    }
+
+    if (core.isObject(opt_rangeEdges)) {
+      if (core.isBoolean(opt_rangeEdges.includeUpper)) {
+        this.body_.includeUpper = opt_rangeEdges.includeUpper;
+      }
+
+      if (core.isBoolean(opt_rangeEdges.includeLower)) {
+        this.body_.includeLower = opt_rangeEdges.includeLower;
+      }
     }
   }
 
@@ -70,11 +87,12 @@ class Range extends Embodied {
    * Constructs a {@link Range} instance.
    * @param {*} from Range's `from` value
    * @param {*} to Range's `to` value
+   * @param {*} rangeEdges Range's edges value
    * @return {!Range} Returns a new instance of {@link Range}
    * @static
    */
-  static range(from, to) {
-    return new Range(from, to);
+  static range(from, to, rangeEdges) {
+    return new Range(from, to, rangeEdges);
   }
 
   /**

@@ -811,6 +811,30 @@ describe('Filter', function() {
         filter.toString()
       );
     });
+
+    it('should create Filter with "range" operator and range edges', function() {
+      const filter = Filter.range('age', 12, 15, {
+        includeLower: false,
+        includeUpper: true,
+      });
+      const body = {
+        age: {
+          operator: 'range',
+          value: {
+            from: 12,
+            to: 15,
+            includeLower: false,
+            includeUpper: true,
+          },
+        },
+      };
+      assert.deepEqual(body, filter.body());
+      assert.strictEqual(
+        '{"age":{"operator":"range","value":{"from":12,"to":15,' +
+          '"includeUpper":true,"includeLower":false}}}',
+        filter.toString()
+      );
+    });
   });
 
   describe('Filter.shape', function() {
