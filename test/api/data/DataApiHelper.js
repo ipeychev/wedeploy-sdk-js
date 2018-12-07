@@ -1442,6 +1442,39 @@ describe('DataApiHelper', function() {
 
       assert.deepEqual(queryBody, query);
     });
+
+    it('should build the range query when range contains edges', function() {
+      const data = WeDeploy.data('http://localhost').range('age', 24, 35, {
+        includeUpper: true,
+        includeLower: false,
+      });
+
+      const query = data.processAndResetQueryState();
+
+      const queryBody = {
+        body_: {
+          filter: [
+            {
+              and: [
+                {
+                  age: {
+                    operator: 'range',
+                    value: {
+                      from: 24,
+                      to: 35,
+                      includeUpper: true,
+                      includeLower: false,
+                    },
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      assert.deepEqual(queryBody, query);
+    });
   });
 
   describe('.where()', function() {

@@ -44,6 +44,24 @@ describe('Range', function() {
       assert.deepEqual(body, range.body());
       assert.deepEqual('{"from":10,"to":20}', range.toString());
     });
+
+    it('should create instance with both from/to values and edges', function() {
+      const range = Range.range(10, 20, {
+        includeUpper: true,
+        includeLower: false,
+      });
+      const body = {
+        from: 10,
+        to: 20,
+        includeUpper: true,
+        includeLower: false,
+      };
+      assert.deepEqual(body, range.body());
+      assert.deepEqual(
+        '{"from":10,"to":20,"includeUpper":true,"includeLower":false}',
+        range.toString()
+      );
+    });
   });
   describe('Range.from', function() {
     it('should create instance with just the "from" value', function() {
