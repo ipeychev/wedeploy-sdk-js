@@ -563,8 +563,8 @@ class DataApiHelper extends ApiHelper {
     this.isSearch_ = true;
 
     return this.buildUrl_()
-      .path(key)
-      .get(this.processAndResetQueryState())
+      .path(key + '/_search')
+      .post(this.processAndResetQueryState())
       .then(response => assertResponseSucceeded(response))
       .then(response => response.body());
   }

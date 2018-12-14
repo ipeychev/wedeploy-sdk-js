@@ -1645,7 +1645,7 @@ describe('DataApiHelper', function() {
 
     context('when using valid params', function() {
       it('should set headers on search', function(done) {
-        RequestMock.intercept('GET', 'http://localhost/food?type=search').reply(
+        RequestMock.intercept('POST', 'http://localhost/food/_search').reply(
           200,
           '{"total":1}'
         );
@@ -1660,7 +1660,7 @@ describe('DataApiHelper', function() {
       });
 
       it('should send search request when no filters are provided', function(done) {
-        RequestMock.intercept('GET', 'http://localhost/food?type=search').reply(
+        RequestMock.intercept('POST', 'http://localhost/food/_search').reply(
           200,
           '{"total":1,"highlights":{"2":{}},"documents":[{"id":2,"ping":"pong1"}],"scores":{"2":0.13102644681930542},"queryTime":1}'
         );
@@ -1678,11 +1678,9 @@ describe('DataApiHelper', function() {
 
       it('should send request with query search in the body', function(done) {
         RequestMock.intercept(
-          'GET',
-          'http://localhost/food?type=search&filter=%5B%7B%22and%22%3A%5B%7B' +
-            '%22name%22%3A%7B%22operator%22%3A%22%3D%22%2C%22value%22%3A' +
-            '%22foo%22%7D%7D%2C%7B%22name%22%3A%7B%22operator%22%3A%22%3D%22%2C' +
-            '%22value%22%3A%22bar%22%7D%7D%5D%7D%5D'
+          'POST',
+          'http://localhost/food/_search',
+          '{"type":"search","filter":[{"and":[{"name":{"operator":"=","value":"foo"}},{"name":{"operator":"=","value":"bar"}}]}]}'
         ).reply(
           200,
           '{"total":1,"documents":[{"id":2,"ping":"pong1"}],"scores":{"2":0.13102644681930542},"queryTime":1}'
@@ -1742,8 +1740,9 @@ describe('DataApiHelper', function() {
           const data = WeDeploy.data('http://localhost');
 
           RequestMock.intercept(
-            'GET',
-            'http://localhost/food?type=search&filter=%5B%7B%22and%22%3A%5B%7B%22type%22%3A%7B%22operator%22%3A%22%3D%22%2C%22value%22%3A%22fruit%22%7D%7D%5D%7D%5D'
+            'POST',
+            'http://localhost/food/_search',
+            '{"type":"search","filter":[{"and":[{"type":{"operator":"=","value":"fruit"}}]}]}'
           ).reply(200);
 
           data
@@ -1753,9 +1752,9 @@ describe('DataApiHelper', function() {
               RequestMock.teardown();
               RequestMock.setup();
 
-              const requestUrlWithNoQuery = 'http://localhost/food?type=search';
+              const requestUrlWithNoQuery = 'http://localhost/food/_search';
 
-              RequestMock.intercept('GET', requestUrlWithNoQuery).reply(200);
+              RequestMock.intercept('POST', requestUrlWithNoQuery).reply(200);
 
               data.search('food').then(() => {
                 assert.strictEqual(requestUrlWithNoQuery, RequestMock.getUrl());
@@ -1771,8 +1770,9 @@ describe('DataApiHelper', function() {
       function() {
         it('should not aggregate the previous query into the next fetch', function(done) {
           RequestMock.intercept(
-            'GET',
-            'http://localhost/food?type=search&filter=%5B%7B%22and%22%3A%5B%7B%22type%22%3A%7B%22operator%22%3A%22%3D%22%2C%22value%22%3A%22fruit%22%7D%7D%5D%7D%5D'
+            'POST',
+            'http://localhost/food/_search',
+            '{"type":"search","filter":[{"and":[{"type":{"operator":"=","value":"fruit"}}]}]}'
           ).reply(200);
 
           WeDeploy.data('http://localhost')
@@ -1782,9 +1782,9 @@ describe('DataApiHelper', function() {
               RequestMock.teardown();
               RequestMock.setup();
 
-              const requestUrlWithNoQuery = 'http://localhost/food?type=search';
+              const requestUrlWithNoQuery = 'http://localhost/food/_search';
 
-              RequestMock.intercept('GET', requestUrlWithNoQuery).reply(200);
+              RequestMock.intercept('POST', requestUrlWithNoQuery).reply(200);
 
               WeDeploy.data('http://localhost')
                 .search('food')
