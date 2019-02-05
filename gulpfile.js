@@ -357,7 +357,7 @@ const testNodeWatch = gulp.series(testNode, function nodeWatch() {
 });
 
 function testSaucelabs(done) {
-  let url = 'https://app-wedeploysdkjsjwt.wedeploy.io';
+  let url = 'https://app-wedeploysdkjsjwt.lfr.io';
 
   if (process.env.TRAVIS_PULL_REQUEST) {
     url += '?pull_request=' + process.env.TRAVIS_PULL_REQUEST;
